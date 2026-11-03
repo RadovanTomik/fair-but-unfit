@@ -4,7 +4,9 @@
 The JSON file is an array of check payloads (see quality-checks/qc_synthea.json). Each
 entry's "category" names a data-quality dimension category, defined in
 quality-checks/categories.json; the script creates missing categories and links the
-checks. Matching is by exact check name: existing checks are updated, the rest created,
+checks. Thresholds in the JSON are percentages (agent format); the script converts them
+to fractions (0-1) for the server, whose API expects doubles like 0.1.
+Matching is by exact check name: existing checks are updated, the rest created,
 so re-running is safe.
 
 Targets (--target):
@@ -28,6 +30,7 @@ import argparse
 import getpass
 import hashlib
 import json
+import math
 import os
 import sys
 import urllib.error
@@ -208,9 +211,10 @@ def main() -> int:
             if "epsilonBudget" in check:
                 payload["epsilonBudget"] = check["epsilonBudget"]
             payload["categoryId"] = cat_id
-        else:  # server: metadata only, no query/type
-            payload = {k: check[k] for k in
-                       ("name", "description", "warningThreshold", "errorThreshold") if k in check}
+        else:  # server: metadata only, no query/type; thresholds are fractions (0-1)
+            payload = {k: check[k] for k in ("name", "description") if k in check}
+            payload["warningThreshold"] = check["warningThreshold"] / 100.0
+            payload["errorThreshold"] = check["errorThreshold"] / 100.0
             payload["categoryId"] = cat_id
 
         current = existing.get(name)
@@ -223,11 +227,18 @@ def main() -> int:
             created += 1
         else:
             check_id = current["id"]
-            fields = ("description", "warningThreshold", "errorThreshold") if client.target == "server" \
-                else ("description", "query", "type", "warningThreshold", "errorThreshold")
-            same = all(current.get(k) == check.get(k) for k in fields) \
-                and current.get("epsilonBudget", None) == check.get("epsilonBudget", None) \
-                and (current.get("category") or {}).get("id") == cat_id
+            if client.target == "server":
+                same = current.get("description") == check.get("description") \
+                    and math.isclose(float(current.get("warningThreshold", -1)),
+                                     check.get("warningThreshold", 0) / 100.0) \
+                    and math.isclose(float(current.get("errorThreshold", -1)),
+                                     check.get("errorThreshold", 0) / 100.0) \
+                    and (current.get("category") or {}).get("id") == cat_id
+            else:
+                fields = ("description", "query", "type", "warningThreshold", "errorThreshold")
+                same = all(current.get(k) == check.get(k) for k in fields) \
+                    and current.get("epsilonBudget", None) == check.get("epsilonBudget", None) \
+                    and (current.get("category") or {}).get("id") == cat_id
             if not same:
                 if not args.dry_run:
                     client.update_check(check_id, payload)

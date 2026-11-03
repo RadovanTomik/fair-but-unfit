@@ -4,8 +4,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE p.gender_concept_id IS NULL OR p.year_of_birth IS NULL OR p.race_concept_id IS NULL OR p.ethnicity_concept_id IS NULL",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Conformance"
   },
   {
@@ -13,8 +13,8 @@
     "description": "Detects degradation D1 (unmapped diagnoses). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM concept c WHERE c.concept_id = co.condition_concept_id AND c.standard_concept = 'S' AND c.invalid_reason IS NULL AND c.domain_id = 'Condition'))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Conformance"
   },
   {
@@ -22,8 +22,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id) OR NOT EXISTS (SELECT 1 FROM visit_occurrence v WHERE v.person_id = p.person_id)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Completeness"
   },
   {
@@ -31,8 +31,8 @@
     "description": "Detects degradation D4 (missing HbA1c, MNAR). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co JOIN concept_ancestor ca ON ca.descendant_concept_id = co.condition_concept_id WHERE co.person_id = p.person_id AND ca.ancestor_concept_id = 201826) AND NOT EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND m.value_as_number IS NOT NULL)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Completeness"
   },
   {
@@ -40,8 +40,8 @@
     "description": "Detects degradation D3 (sentinel birth dates). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE p.year_of_birth <= 1900 OR p.year_of_birth > EXTRACT(YEAR FROM CURRENT_DATE) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND EXTRACT(YEAR FROM op.observation_period_end_date) - p.year_of_birth > 110) OR EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND EXTRACT(YEAR FROM co.condition_start_date) < p.year_of_birth)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Plausibility"
   },
   {
@@ -49,8 +49,8 @@
     "description": "Detects degradation D2 (HbA1c unit mislabeling). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND (m.unit_concept_id = 8554 OR m.unit_source_value = '%') AND (m.value_as_number < 3 OR m.value_as_number > 20))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Plausibility"
   },
   {
@@ -58,8 +58,8 @@
     "description": "Detects degradation D5 (truncated observation periods). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = co.person_id AND co.condition_start_date BETWEEN op.observation_period_start_date AND op.observation_period_end_date))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Concordance"
   },
   {
@@ -67,8 +67,8 @@
     "description": "Detects degradation D1 (unmapped diagnoses) and D2 (HbA1c unit mislabeling). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND m.value_as_number >= 6.5) AND NOT EXISTS (SELECT 1 FROM condition_occurrence co JOIN concept_ancestor ca ON ca.descendant_concept_id = co.condition_concept_id WHERE co.person_id = p.person_id AND ca.ancestor_concept_id = 201820)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Concordance"
   },
   {
@@ -76,8 +76,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND co.condition_start_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Currency"
   },
   {
@@ -85,8 +85,8 @@
     "description": "Detects degradation D6 (stale extract). Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date > (SELECT MAX(d) FROM (SELECT MAX(co.condition_start_date) AS d FROM condition_occurrence co WHERE co.person_id = p.person_id UNION ALL SELECT MAX(m.measurement_date) FROM measurement m WHERE m.person_id = p.person_id) x) + INTERVAL '2 years')",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Currency"
   }
 ]

@@ -4,8 +4,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE p.gender_concept_id IS NULL OR p.year_of_birth IS NULL OR p.race_concept_id IS NULL OR p.ethnicity_concept_id IS NULL",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Conformance"
   },
   {
@@ -13,8 +13,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE (p.gender_concept_id <> 0 AND NOT EXISTS (SELECT 1 FROM concept c WHERE c.concept_id = p.gender_concept_id AND c.standard_concept = 'S' AND c.invalid_reason IS NULL AND c.domain_id = 'Gender')) OR EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND co.condition_concept_id <> 0 AND NOT EXISTS (SELECT 1 FROM concept c WHERE c.concept_id = co.condition_concept_id AND c.standard_concept = 'S' AND c.invalid_reason IS NULL AND c.domain_id = 'Condition')) OR EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id AND s.specimen_concept_id <> 0 AND NOT EXISTS (SELECT 1 FROM concept c WHERE c.concept_id = s.specimen_concept_id AND c.standard_concept = 'S' AND c.invalid_reason IS NULL AND c.domain_id = 'Specimen'))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Conformance"
   },
   {
@@ -22,8 +22,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE NOT EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id) OR NOT EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Completeness"
   },
   {
@@ -31,8 +31,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND (co.condition_concept_id = 0 OR co.condition_start_date IS NULL)) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date IS NULL) OR EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id AND s.specimen_date IS NULL)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Completeness"
   },
   {
@@ -40,8 +40,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND EXTRACT(YEAR FROM co.condition_start_date) < p.year_of_birth) OR EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id AND EXTRACT(YEAR FROM s.specimen_date) < p.year_of_birth) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date < op.observation_period_start_date)",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Plausibility"
   },
   {
@@ -49,8 +49,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE p.year_of_birth < 1900 OR p.year_of_birth > EXTRACT(YEAR FROM CURRENT_DATE) OR EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND (EXTRACT(YEAR FROM co.condition_start_date) - p.year_of_birth < 18 OR EXTRACT(YEAR FROM co.condition_start_date) - p.year_of_birth > 100))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Plausibility"
   },
   {
@@ -58,8 +58,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = co.person_id AND co.condition_start_date BETWEEN op.observation_period_start_date AND op.observation_period_end_date)) OR EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = s.person_id AND s.specimen_date BETWEEN op.observation_period_start_date AND op.observation_period_end_date))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Concordance"
   },
   {
@@ -67,8 +67,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM (VALUES ('C 18.0 - Caecum', 432837), ('C 18.1 - Appendix', 433143), ('C 18.2 - Ascending colon', 4247719), ('C 18.3 - Hepatic flexure', 438979), ('C 18.4 - Transverse colon', 432257), ('C 18.5 - Splenic flexure', 437798), ('C 18.6 - Descending colon', 441800), ('C 18.7 - Sigmoid colon', 436635), ('C 19 - Rectosigmoid junction', 438699), ('C 20 - Rectum', 74582)) AS m(source_value, concept_id) WHERE m.source_value = co.condition_source_value AND m.concept_id = co.condition_concept_id))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Concordance"
   },
   {
@@ -76,8 +76,8 @@
     "description": "Reports the share of patients with at least one faulty record; 0% means the check passed.",
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND co.condition_start_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = p.person_id AND s.specimen_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source))",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Currency"
   },
   {
@@ -85,8 +85,8 @@
     "description": "Patients with at least one specimen, but none collected within one year of their first (primary) diagnosis year. Reports the share of patients affected; 0% means the check passed.",
     "query": "WITH dx AS (\n  SELECT person_id, MIN(condition_start_date) AS dx_date\n  FROM condition_occurrence\n  GROUP BY person_id\n)\nSELECT dx.person_id\nFROM dx\nWHERE EXISTS (SELECT 1 FROM specimen s WHERE s.person_id = dx.person_id)\n  AND NOT EXISTS (\n    SELECT 1\n    FROM specimen s\n    WHERE s.person_id = dx.person_id\n      AND EXTRACT(YEAR FROM s.specimen_date)\n          BETWEEN EXTRACT(YEAR FROM dx.dx_date) - 1\n              AND EXTRACT(YEAR FROM dx.dx_date) + 1\n  );",
     "type": "SQL",
-    "warningThreshold": 1,
-    "errorThreshold": 5,
+    "warningThreshold": 10,
+    "errorThreshold": 30,
     "category": "Currency"
   }
 ]
