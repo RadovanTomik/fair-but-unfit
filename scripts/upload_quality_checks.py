@@ -220,13 +220,26 @@ def main() -> int:
 
         current = existing.get(name)
         check_id = None
+        just_created = False
         if current is None:
-            if not args.dry_run:
-                check_id = client.create_check(payload)["id"]
-            print(f"  + {name} ({'would create' if args.dry_run else 'created'})"
-                  + (f" [{cat_name}]" if cat_name else ""))
-            created += 1
-        else:
+            try:
+                if not args.dry_run:
+                    check_id = client.create_check(payload)["id"]
+                print(f"  + {name} ({'would create' if args.dry_run else 'created'})"
+                      + (f" [{cat_name}]" if cat_name else ""))
+                created += 1
+                just_created = True
+            except ApiError as e:
+                if "HTTP 409" in str(e):
+                    # Already exists (e.g. auto-registered on the server); treat as
+                    # an update of the existing check and keep going.
+                    current = next((c for c in client.list_checks() if c["name"] == name), None)
+                    if current is None:
+                        raise
+                    print(f"  = {name} (already existed on the target — continuing)")
+                else:
+                    raise
+        if current is not None and not just_created:
             check_id = current["id"]
             if client.target == "server":
                 same = current.get("description") == check.get("description") \
