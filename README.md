@@ -26,9 +26,25 @@ python3 scripts/upload_quality_checks.py --agent-url https://<crc-agent-host> \
     --checks quality-checks/qc_crc.json --category-file quality-checks/category_crc.json
 ```
 
+### `scripts/synthea_degradation_and_analysis.sql`
+
+The Synthea OMOP degradation experiment: **Part 1** applies the D1–D3 degradations
+(unmapped T2DM diagnoses, HbA1c % → mmol/mol mislabeling, sentinel 1900-01-01 birth
+dates) to a `degraded` schema in one transaction (irreversible — re-copy the schema to
+reset); **Part 2** runs the T2DM prevalence / HbA1c analysis on baseline vs. degraded.
+
+> [!WARNING]
+> The `degraded` schema in the paper's OMOP database contains **exactly these**
+> degradations already — do not re-run Part 1 on it; re-copy it from the
+> `cdm_synthea10` baseline first. Double-applying D2 produces nonsensical values
+> (mean HbA1c ≈ 208, values up to 807 and below 0).
+> The script's Part 2 comments say `SET search_path TO cdm` — on the paper's OMOP
+> database the baseline schema is called `cdm_synthea10`.
+
 ### `scripts/upload_quality_checks.py`
 
-Uploads the checks to an agent. Python 3.9+, no dependencies:
+Uploads the checks from a JSON file to a Data Quality Framework agent.
+Python 3.9+, no dependencies:
 
 ```bash
 python3 scripts/upload_quality_checks.py --agent-url https://<agent-host>
