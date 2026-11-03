@@ -263,17 +263,25 @@ def main() -> int:
                 print(f"  = {name} (unchanged)")
                 skipped += 1
 
-        # server: the query lives in immutable versions, uniquely keyed by its
-        # sha256 hash. The agent's reported versions may store an empty query text
-        # with the real hash (backfill), so compare hashes, never the query text.
+        # server: the query lives in immutable versions, uniquely keyed by the query's
+        # sha256 hash — GLOBALLY (across all checks), so even hash-dedupes can collide.
+        # The agent's reported versions may store an empty query text with the real
+        # hash (backfill), so compare hashes, never the query text; a leftover 409
+        # means another check already holds this query, and the check still reports.
         if client.target == "server" and not args.dry_run and check_id is not None:
             versions = client.list_versions(check_id)
             query_hash = hashlib.sha256(check["query"].encode()).hexdigest()
             if not any(v.get("hash") == query_hash for v in versions):
                 latest_v = max((v.get("version", 0) for v in versions), default=0)
-                client.create_version(check_id, check["query"], check.get("type", "SQL"), latest_v + 1)
-                print(f"    ^ new query version v{latest_v + 1} published (was v{latest_v or '-'})")
-                versioned += 1
+                try:
+                    client.create_version(check_id, check["query"], check.get("type", "SQL"), latest_v + 1)
+                    print(f"    ^ new query version v{latest_v + 1} published (was v{latest_v or '-'})")
+                    versioned += 1
+                except ApiError as e:
+                    if "HTTP 409" in str(e):
+                        print("    ^ version already known elsewhere (hash duplicate) — skipped")
+                    else:
+                        raise
 
     print(f"Done: {created} created, {updated} updated, {skipped} unchanged"
           + (f", {versioned} new query versions" if client.target == "server" and not args.dry_run else "")
