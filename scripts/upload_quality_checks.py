@@ -25,6 +25,7 @@ import urllib.request
 from pathlib import Path
 
 DEFAULT_CHECKS = Path(__file__).resolve().parent.parent / "quality-checks" / "qc_synthea.json"
+DEFAULT_CATEGORY = Path(__file__).resolve().parent.parent / "quality-checks" / "category.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -34,12 +35,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--password", help="Agent password (or $DQF_AGENT_PASSWORD, or prompt)")
     p.add_argument("--checks", type=Path, default=DEFAULT_CHECKS,
                    help=f"JSON file with quality check payloads (default: {DEFAULT_CHECKS})")
-    p.add_argument("--category", default="Synthea",
-                   help="Category to group the checks under; created if missing (default: Synthea). "
-                        "Pass --no-category to upload without a category.")
+    p.add_argument("--category-file", type=Path, default=DEFAULT_CATEGORY,
+                   help=f"JSON file with the category definition (name, colorHex; default: {DEFAULT_CATEGORY})")
     p.add_argument("--no-category", action="store_true", help="Do not assign any category")
-    p.add_argument("--category-color", default="#2563EB",
-                   help="Hex color for a newly created category (default: #2563EB)")
     p.add_argument("--dry-run", action="store_true", help="Print what would change without touching the agent")
     return p.parse_args()
 
@@ -116,7 +114,8 @@ def main() -> int:
 
     category_id = None
     if not args.no_category:
-        category_id = ensure_category(base, token, args.category, args.category_color, args.dry_run)
+        category = json.loads(args.category_file.read_text())
+        category_id = ensure_category(base, token, category["name"], category["colorHex"], args.dry_run)
         if args.dry_run and category_id is None:
             print("    (dry-run: category would be created first; check diffs use it implicitly)")
 
