@@ -1,0 +1,7 @@
+[
+  { "name": "Conformance",  "colorHex": "#DC2626" },
+  { "name": "Completeness", "colorHex": "#2563EB" },
+  { "name": "Plausibility", "colorHex": "#D97706" },
+  { "name": "Concordance",  "colorHex": "#059669" },
+  { "name": "Currency",     "colorHex": "#0891B2" }
+]

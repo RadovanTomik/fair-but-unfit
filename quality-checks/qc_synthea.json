@@ -5,7 +5,8 @@
     "query": "SELECT person_id FROM person p WHERE p.gender_concept_id IS NULL OR p.year_of_birth IS NULL OR p.race_concept_id IS NULL OR p.ethnicity_concept_id IS NULL",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Conformance"
   },
   {
     "name": "C1.2 Patients with an unmapped, non-standard, invalid or wrong-domain diagnosis concept",
@@ -13,7 +14,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM concept c WHERE c.concept_id = co.condition_concept_id AND c.standard_concept = 'S' AND c.invalid_reason IS NULL AND c.domain_id = 'Condition'))",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Conformance"
   },
   {
     "name": "CO2.1 Patients without an observation period or without any visit",
@@ -21,7 +23,8 @@
     "query": "SELECT person_id FROM person p WHERE NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id) OR NOT EXISTS (SELECT 1 FROM visit_occurrence v WHERE v.person_id = p.person_id)",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Completeness"
   },
   {
     "name": "CO2.2 Patients with type 2 diabetes without any HbA1c result",
@@ -29,7 +32,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co JOIN concept_ancestor ca ON ca.descendant_concept_id = co.condition_concept_id WHERE co.person_id = p.person_id AND ca.ancestor_concept_id = 201826) AND NOT EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND m.value_as_number IS NOT NULL)",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Completeness"
   },
   {
     "name": "P3.1 Patients with an implausible birth year (1900 or earlier, in the future, or age over 110) or a diagnosis dated before birth",
@@ -37,7 +41,8 @@
     "query": "SELECT person_id FROM person p WHERE p.year_of_birth <= 1900 OR p.year_of_birth > EXTRACT(YEAR FROM CURRENT_DATE) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND EXTRACT(YEAR FROM op.observation_period_end_date) - p.year_of_birth > 110) OR EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND EXTRACT(YEAR FROM co.condition_start_date) < p.year_of_birth)",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Plausibility"
   },
   {
     "name": "P3.2 Patients with an HbA1c result in percent outside the plausible range (3-20 %)",
@@ -45,7 +50,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND (m.unit_concept_id = 8554 OR m.unit_source_value = '%') AND (m.value_as_number < 3 OR m.value_as_number > 20))",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Plausibility"
   },
   {
     "name": "CC4.1 Patients with a diagnosis outside their observation period",
@@ -53,7 +59,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND NOT EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = co.person_id AND co.condition_start_date BETWEEN op.observation_period_start_date AND op.observation_period_end_date))",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Concordance"
   },
   {
     "name": "CC4.2 Patients with an HbA1c result in the diabetic range (6.5 % or higher) but no diabetes diagnosis",
@@ -61,7 +68,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_concept_id = 3004410 AND m.value_as_number >= 6.5) AND NOT EXISTS (SELECT 1 FROM condition_occurrence co JOIN concept_ancestor ca ON ca.descendant_concept_id = co.condition_concept_id WHERE co.person_id = p.person_id AND ca.ancestor_concept_id = 201820)",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Concordance"
   },
   {
     "name": "CU5.1 Patients with records dated after the data release date",
@@ -69,7 +77,8 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM condition_occurrence co WHERE co.person_id = p.person_id AND co.condition_start_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM measurement m WHERE m.person_id = p.person_id AND m.measurement_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source)) OR EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date > (SELECT COALESCE(MAX(source_release_date), CURRENT_DATE) FROM cdm_source))",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Currency"
   },
   {
     "name": "CU5.2 Patients whose clinical records stop more than 2 years before the end of their observation period",
@@ -77,6 +86,7 @@
     "query": "SELECT person_id FROM person p WHERE EXISTS (SELECT 1 FROM observation_period op WHERE op.person_id = p.person_id AND op.observation_period_end_date > (SELECT MAX(d) FROM (SELECT MAX(co.condition_start_date) AS d FROM condition_occurrence co WHERE co.person_id = p.person_id UNION ALL SELECT MAX(m.measurement_date) FROM measurement m WHERE m.person_id = p.person_id) x) + INTERVAL '2 years')",
     "type": "SQL",
     "warningThreshold": 1,
-    "errorThreshold": 5
+    "errorThreshold": 5,
+    "category": "Currency"
   }
 ]

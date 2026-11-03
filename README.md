@@ -53,12 +53,26 @@ python3 scripts/upload_quality_checks.py --agent-url https://<agent-host>
 ```
 
 Matching is by exact check name: existing checks are updated, the rest created.
-The script also makes sure the category defined in
-[`quality-checks/category.json`](quality-checks/category.json) (`{"name": "Synthea",
-"colorHex": "#2563EB"}`) exists on the agent (created if missing) and assigns every
-uploaded check to it. Point `--category-file <path>` at another JSON to use a
-different category, or pass `--no-category` to upload checks without grouping.
+Categories come from [`quality-checks/categories.json`](quality-checks/categories.json)
+— one per data-quality **dimension** (Conformance, Completeness, Plausibility,
+Concordance, Currency). Each check entry names its dimension in its `"category"`
+field; the script creates missing categories and links the checks. Pass
+`--category-file <single-category.json>` to force all checks into one category instead,
+or `--no-category` to upload without grouping.
 
-**Live instance:** the checks are currently uploaded to the DQF Synthea agent
-(`degraded` schema of the paper's OMOP database, see `deployments/dqf-synthea-agent`
-in the companion `RadovanTomik/hermes` repository).
+### Uploading to a Data Quality **Server** (`--target server`)
+
+```bash
+python3 scripts/upload_quality_checks.py --agent-url https://<server-host> --target server
+```
+
+The server API differs (`/api/v1`, login still `/api/auth/login`): check metadata
+carries no SQL; queries live in immutable **versions** keyed by the query's sha256
+hash. The script creates a new version only when no stored version has the same hash.
+Note: checks auto-registered on the server by agent reports are backfilled with an
+empty query text but the correct hash — the script detects them and skips versioning,
+so on an agent-fed server run you will typically see "0 new query versions".
+
+**Live instances:** the Synthea checks (grouped in the five dimension categories)
+are on the DQF acceptance server, and on the DQF Synthea agent
+(see `deployments/dqf-synthea-agent` in the companion `RadovanTomik/hermes` repository).
