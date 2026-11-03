@@ -4,8 +4,8 @@
 The JSON file is an array of check payloads (see quality-checks/qc_synthea.json). Each
 entry's "category" names a data-quality dimension category, defined in
 quality-checks/categories.json; the script creates missing categories and links the
-checks. Thresholds in the JSON are percentages (agent format); the script converts them
-to fractions (0-1) for the server, whose API expects doubles like 0.1.
+checks. Thresholds in the JSON are percentages (agent format); the server stores them
+the same way (10 means 10 %), only typed as doubles, so no unit conversion is applied.
 Matching is by exact check name: existing checks are updated, the rest created,
 so re-running is safe.
 
@@ -211,10 +211,11 @@ def main() -> int:
             if "epsilonBudget" in check:
                 payload["epsilonBudget"] = check["epsilonBudget"]
             payload["categoryId"] = cat_id
-        else:  # server: metadata only, no query/type; thresholds are fractions (0-1)
-            payload = {k: check[k] for k in ("name", "description") if k in check}
-            payload["warningThreshold"] = check["warningThreshold"] / 100.0
-            payload["errorThreshold"] = check["errorThreshold"] / 100.0
+        else:  # server: metadata only, no query/type; same percentage thresholds
+            payload = {k: check[k] for k in
+                       ("name", "description", "warningThreshold", "errorThreshold") if k in check}
+            payload["warningThreshold"] = float(check["warningThreshold"])
+            payload["errorThreshold"] = float(check["errorThreshold"])
             payload["categoryId"] = cat_id
 
         current = existing.get(name)
@@ -230,9 +231,9 @@ def main() -> int:
             if client.target == "server":
                 same = current.get("description") == check.get("description") \
                     and math.isclose(float(current.get("warningThreshold", -1)),
-                                     check.get("warningThreshold", 0) / 100.0) \
+                                     float(check.get("warningThreshold", 0))) \
                     and math.isclose(float(current.get("errorThreshold", -1)),
-                                     check.get("errorThreshold", 0) / 100.0) \
+                                     float(check.get("errorThreshold", 0))) \
                     and (current.get("category") or {}).get("id") == cat_id
             else:
                 fields = ("description", "query", "type", "warningThreshold", "errorThreshold")
