@@ -14,6 +14,18 @@ Each entry is one Agent `QualityCheckCreateDTO` payload (`name`, `description`,
 `person_id` of each affected patient; the agent reports the share of affected patients.
 To edit a check, edit this file and re-run the uploader (idempotent, matches by `name`).
 
+### `quality-checks/qc_crc.json` and `quality-checks/category_crc.json`
+
+The same 10-check structure adapted for the CRC-Cohort OMOP CDM v5.4 dataset
+(diagnosis/specimen-oriented checks, tumour-location mapping check CC4.2, and
+CU5.2 = *specimen not collected within one year of primary diagnosis*).
+Upload against a CRC-backed agent with:
+
+```bash
+python3 scripts/upload_quality_checks.py --agent-url https://<crc-agent-host> \
+    --checks quality-checks/qc_crc.json --category-file quality-checks/category_crc.json
+```
+
 ### `scripts/upload_quality_checks.py`
 
 Uploads the checks to an agent. Python 3.9+, no dependencies:
