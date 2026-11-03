@@ -25,6 +25,10 @@ python3 scripts/upload_quality_checks.py --agent-url https://<agent-host>
 ```
 
 Matching is by exact check name: existing checks are updated, the rest created.
+The script also makes sure a category named **Synthea** exists on the agent
+(created if missing) and assigns every uploaded check to it.
+Use `--category <name>` / `--category-color <hex>` to override, or `--no-category`
+to upload checks without grouping.
 
 **Live instance:** the checks are currently uploaded to the DQF Synthea agent
 (`degraded` schema of the paper's OMOP database, see `deployments/dqf-synthea-agent`

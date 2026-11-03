@@ -34,6 +34,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--password", help="Agent password (or $DQF_AGENT_PASSWORD, or prompt)")
     p.add_argument("--checks", type=Path, default=DEFAULT_CHECKS,
                    help=f"JSON file with quality check payloads (default: {DEFAULT_CHECKS})")
+    p.add_argument("--category", default="Synthea",
+                   help="Category to group the checks under; created if missing (default: Synthea). "
+                        "Pass --no-category to upload without a category.")
+    p.add_argument("--no-category", action="store_true", help="Do not assign any category")
+    p.add_argument("--category-color", default="#2563EB",
+                   help="Hex color for a newly created category (default: #2563EB)")
     p.add_argument("--dry-run", action="store_true", help="Print what would change without touching the agent")
     return p.parse_args()
 
@@ -81,6 +87,23 @@ def list_checks(base: str, token: str) -> list[dict]:
         page += 1
 
 
+def ensure_category(base: str, token: str, name: str, color: str, dry_run: bool) -> int | None:
+    """Return the id of the category called `name`, creating it if missing."""
+    _, body = request(base, "GET", "/api/categories", token)
+    for c in (body or {}).get("_embedded", {}).get("categories", []):
+        if c.get("name") == name:
+            print(f"  = category {name!r} exists (id {c['id']})")
+            return c["id"]
+    if dry_run:
+        print(f"  + category {name!r} (would create)")
+        return None
+    _, body = request(base, "POST", "/api/categories", token,
+                      {"name": name, "colorHex": color})
+    body = body or {}
+    print(f"  + category {name!r} created (id {body['id']})")
+    return body["id"]
+
+
 def main() -> int:
     args = parse_args()
     base = args.agent_url.rstrip("/")
@@ -91,25 +114,38 @@ def main() -> int:
     print(f"Authenticating at {base} as {args.user} ...")
     token = login(base, args.user, password)
 
+    category_id = None
+    if not args.no_category:
+        category_id = ensure_category(base, token, args.category, args.category_color, args.dry_run)
+        if args.dry_run and category_id is None:
+            print("    (dry-run: category would be created first; check diffs use it implicitly)")
+
     existing = {c["name"]: c for c in list_checks(base, token)}
     created = updated = skipped = 0
     for check in checks:
         name = check["name"]
+        payload = dict(check)
+        if not args.no_category:
+            payload["categoryId"] = category_id if not args.dry_run else -1
         if name in existing:
             current = existing[name]
             fields = {k: current.get(k) for k in ("description", "query", "type", "warningThreshold", "errorThreshold")}
-            changed = any(fields[k] != check.get(k) for k in fields)
-            if not changed and current.get("epsilonBudget") == check.get("epsilonBudget"):
+            current_cat = (current.get("category") or {}).get("id")
+            cat_changed = not args.no_category and current_cat != category_id
+            changed = any(fields[k] != check.get(k) for k in fields) \
+                or current.get("epsilonBudget") != check.get("epsilonBudget") or cat_changed
+            if not changed:
                 print(f"  = {name} (unchanged)")
                 skipped += 1
                 continue
             if not args.dry_run:
-                request(base, "PUT", f"/api/quality-checks/{current['id']}", token, check)
-            print(f"  ~ {name} ({'would update' if args.dry_run else 'updated'})")
+                request(base, "PUT", f"/api/quality-checks/{current['id']}", token, payload)
+            why = "recategorized" if cat_changed else "content changed"
+            print(f"  ~ {name} ({'would update' if args.dry_run else 'updated'}: {why})")
             updated += 1
         else:
             if not args.dry_run:
-                request(base, "POST", "/api/quality-checks", token, check)
+                request(base, "POST", "/api/quality-checks", token, payload)
             print(f"  + {name} ({'would create' if args.dry_run else 'created'})")
             created += 1
 
