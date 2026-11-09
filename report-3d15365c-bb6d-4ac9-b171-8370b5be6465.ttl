@@ -1,0 +1,420 @@
+BASE   <https://dqf-acc-server.dyn.cloud.e-infra.cz/>
+PREFIX dcat:           <http://www.w3.org/ns/dcat#>
+PREFIX dcterms:        <http://purl.org/dc/terms/>
+PREFIX dqv:            <http://www.w3.org/ns/dqv#>
+PREFIX fdqf:           <https://github.com/bbmri-cz/data-quality-framework/ns/fdqf#>
+PREFIX oa:             <http://www.w3.org/ns/oa#>
+PREFIX om:             <http://www.ontology-of-units-of-measure.org/resource/om-2/>
+PREFIX owl:            <http://www.w3.org/2002/07/owl#>
+PREFIX prov:           <http://www.w3.org/ns/prov#>
+PREFIX qb:             <http://purl.org/linked-data/cube#>
+PREFIX rdfs:           <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#>
+PREFIX skos:           <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd:            <http://www.w3.org/2001/XMLSchema#>
+
+<quality-checks/31>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "C1.2 Patients with an unmapped, non-standard, invalid or wrong-domain diagnosis concept" .
+
+fdqf:statuses  a  skos:ConceptScheme .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-38-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         dqv:qualityAssessment , oa:classifying;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-38-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/31/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "3d5b63174295050fb7a45b93c1de834647ed73e01d27903b83b2f2490db12fe8";
+        dcterms:isVersionOf   <quality-checks/31>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/3> .
+
+<agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#agent>
+        a                prov:SoftwareAgent;
+        rdfs:label       "Synthea - OMOP (omop-db, schema degraded)";
+        owl:versionInfo  "master" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-30-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/30/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-31-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/31/versions/1>;
+        dqv:value                   "0.04"^^xsd:double .
+
+<quality-checks/38>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CU5.1 Patients with records dated after the data release date" .
+
+<categories/4>  a       dqv:Dimension;
+        skos:inScheme   <categories>;
+        skos:prefLabel  "Currency" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-32-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/32/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-35-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:failed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         oa:classifying , dqv:qualityAssessment;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-35-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+fdqf:warning  a         skos:Concept;
+        skos:inScheme   fdqf:statuses;
+        skos:prefLabel  "Warning"@en .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-samples>
+        a                    dqv:QualityMeasurement;
+        rdfs:comment         "Differentially private count: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        qb:dataSet           <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        dqv:computedOn       <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf  fdqf:sampleCount;
+        dqv:value            51 .
+
+<quality-checks/33>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CO2.2 Patients with type 2 diabetes without any HbA1c result" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-33-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/33/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-34-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/34/versions/1>;
+        dqv:value                   "0.24"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-32-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         oa:classifying , dqv:qualityAssessment;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-32-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-35-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/35/versions/1>;
+        dqv:value                   "0.35"^^xsd:double .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-36-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/36/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+fdqf:volume  a  dqv:Dimension .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>
+        a                     dqv:QualityMetadata , dqv:QualityMeasurementDataset;
+        dcterms:description   "Entity totals and check results are noisy values computed by the agent using differential privacy."@en;
+        dcterms:hasPart       <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-32-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-37-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-34-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-samples> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-38-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-36-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-31-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-39-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-33-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-38-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-36-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-patients> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-34-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-32-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-35-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-31-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-33-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-35-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-30-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-39-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-37-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-30-v1>;
+        dcterms:title         "Data quality report 3d15365c-bb6d-4ac9-b171-8370b5be6465"@en;
+        prov:generatedAtTime  "2026-11-09T00:01:49.519914Z"^^xsd:dateTime;
+        prov:wasAttributedTo  <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#agent> .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-37-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/37/versions/1>;
+        dqv:value                   "0.34"^^xsd:double .
+
+fdqf:passed  a          skos:Concept;
+        skos:inScheme   fdqf:statuses;
+        skos:prefLabel  "Passed"@en .
+
+<quality-checks/35>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "P3.2 Patients with an HbA1c result in percent outside the plausible range (3-20 %)" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-38-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/38/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+<categories/1>  a       dqv:Dimension;
+        skos:inScheme   <categories>;
+        skos:prefLabel  "Completeness" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-39-v1>
+        a                           dqv:QualityMeasurement;
+        qb:dataSet                  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        sdmx-attribute:unitMeasure  om:one;
+        dqv:computedOn              <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf         <quality-checks/39/versions/1>;
+        dqv:value                   "0.0"^^xsd:double .
+
+fdqf:sampleCount  a           dqv:Metric;
+        skos:prefLabel        "Sample count"@en;
+        dqv:expectedDataType  xsd:integer;
+        dqv:inDimension       fdqf:volume .
+
+<quality-checks/38/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "b39b8c739e078296fdbe0b3122bbbfa07e22e4e82fb0539ba3954677eb70cf2e";
+        dcterms:isVersionOf   <quality-checks/38>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/4> .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-37-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:failed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         oa:classifying , dqv:qualityAssessment;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-37-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/30>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "C1.1 Patients missing required demographic fields (sex, birth year, race or ethnicity)" .
+
+fdqf:errorThreshold  a  owl:DatatypeProperty , <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>;
+        rdfs:comment  "An affected fraction strictly greater than this value classifies the result as failed; higher fractions indicate worse quality."@en;
+        rdfs:range    xsd:double .
+
+<quality-checks/39/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "b66df4f7deab1b54432a9c0f3421d31848eccceafdb783202ec96139c6736aec";
+        dcterms:isVersionOf   <quality-checks/39>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/4> .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-34-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:warning;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         oa:classifying , dqv:qualityAssessment;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-34-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/37>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CC4.2 Patients with an HbA1c result in the diabetic range (6.5 % or higher) but no diabetes diagnosis" .
+
+<categories/3>  a       dqv:Dimension;
+        skos:inScheme   <categories>;
+        skos:prefLabel  "Conformance" .
+
+<quality-checks/37/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "0547d55b2435394801852291830528725126bb1219cb186911ed8fe54526e2d5";
+        dcterms:isVersionOf   <quality-checks/37>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/2> .
+
+<quality-checks/32>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CO2.1 Patients without an observation period or without any visit" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-31-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         dqv:qualityAssessment , oa:classifying;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-31-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+fdqf:warningThreshold
+        a             owl:DatatypeProperty , <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>;
+        rdfs:comment  "An affected fraction strictly greater than this value classifies the result as warning; higher fractions indicate worse quality."@en;
+        rdfs:range    xsd:double .
+
+<quality-checks/35/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "e6f519a1e49cd99ffde5088f53672429f16b8e3ef1195f39ac523ffdd0a05e85";
+        dcterms:isVersionOf   <quality-checks/35>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/5> .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-39-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         dqv:qualityAssessment , oa:classifying;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-39-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/39>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CU5.2 Patients whose clinical records stop more than 2 years before the end of their observation period" .
+
+<agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>
+        a                          dcat:Dataset;
+        dcterms:title              "Synthea - OMOP (omop-db, schema degraded)";
+        dqv:hasQualityAnnotation   <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-33-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-35-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-30-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-32-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-38-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-31-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-36-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-34-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-37-v1-e1794227867000> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-39-v1-e1794227867000>;
+        dqv:hasQualityMeasurement  <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-33-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-35-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-38-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-37-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-32-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-34-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-31-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-patients> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-36-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-39-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-30-v1> , <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-samples> .
+
+<categories/5>  a       dqv:Dimension;
+        skos:inScheme   <categories>;
+        skos:prefLabel  "Plausibility" .
+
+fdqf:patientCount  a          dqv:Metric;
+        skos:prefLabel        "Patient count"@en;
+        dqv:expectedDataType  xsd:integer;
+        dqv:inDimension       fdqf:volume .
+
+<#server>  a             prov:SoftwareAgent;
+        rdfs:label       "Data Quality Server"@en;
+        owl:versionInfo  "master" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-patients>
+        a                    dqv:QualityMeasurement;
+        rdfs:comment         "Differentially private count: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        qb:dataSet           <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465>;
+        dqv:computedOn       <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        dqv:isMeasurementOf  fdqf:patientCount;
+        dqv:value            1178 .
+
+<quality-checks/36/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "968060098229821916281c91681db9dbe23ae75697ab6f856bc87e002a432981";
+        dcterms:isVersionOf   <quality-checks/36>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/2> .
+
+<quality-checks/34>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "P3.1 Patients with an implausible birth year (1900 or earlier, in the future, or age over 110) or a diagnosis dated before birth" .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-36-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         dqv:qualityAssessment , oa:classifying;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-36-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/34/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "ab0f76341986829672779c4ecbef35b07f412454937cfe5b9fb6d83eeba91885";
+        dcterms:isVersionOf   <quality-checks/34>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/5> .
+
+fdqf:failed  a          skos:Concept;
+        skos:inScheme   fdqf:statuses;
+        skos:prefLabel  "Failed"@en .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-33-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         dqv:qualityAssessment , oa:classifying;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-33-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/32/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "987650703051b67112b0167deae6aa15ec4a62623c6875381f6096e3b1c6953a";
+        dcterms:isVersionOf   <quality-checks/32>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/1> .
+
+<categories>  a  skos:ConceptScheme .
+
+<quality-checks/36>  skos:definition  "Reports the share of patients with at least one faulty record; 0% means the check passed.";
+        skos:prefLabel   "CC4.1 Patients with a diagnosis outside their observation period" .
+
+<categories/2>  a       dqv:Dimension;
+        skos:inScheme   <categories>;
+        skos:prefLabel  "Concordance" .
+
+<quality-checks/30/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "97e95432501f2514ae2284e4cbdb37a782faf77391c9c2481c855f73047a9717";
+        dcterms:isVersionOf   <quality-checks/30>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/3> .
+
+<reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#s-30-v1-e1794227867000>
+        a                      dqv:QualityAnnotation;
+        oa:hasBody             fdqf:passed;
+        oa:hasTarget           <agents/388d3820-d1b2-439d-a8ba-82cd7cf66b8e#dataset>;
+        oa:motivatedBy         oa:classifying , dqv:qualityAssessment;
+        prov:generatedAtTime   "2026-11-09T12:37:47.000756487Z"^^xsd:dateTime;
+        prov:wasAttributedTo   <#server>;
+        prov:wasDerivedFrom    <reports/3d15365c-bb6d-4ac9-b171-8370b5be6465#m-30-v1>;
+        fdqf:errorThreshold    "0.3"^^xsd:double;
+        fdqf:warningThreshold  "0.1"^^xsd:double .
+
+<quality-checks/33/versions/1>
+        a                     dqv:Metric;
+        rdfs:comment          "Differentially private ratio: noisy counts below the agent's suppression threshold are reported as 0."@en;
+        dcterms:identifier    "62606fb92acb6ae21c4817af99fd2503af788fd67c57178c14345e4a0685c0a2";
+        dcterms:isVersionOf   <quality-checks/33>;
+        owl:versionInfo       "1";
+        dqv:expectedDataType  xsd:double;
+        dqv:inDimension       <categories/1> .
